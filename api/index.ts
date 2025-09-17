@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // The backend server is expected to be running on localhost:5001
-const API = axios.create({ baseURL: 'https://ts-obs4.onrender.com/api'  });
+const API = axios.create({ baseURL: 'https://ts-backend-puce.vercel.app/api'  });
 
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem('token');

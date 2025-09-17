@@ -1,0 +1,183 @@
+# Tribe Full-Stack Application - Developer Guide
+
+Hello! Congratulations on the major upgrade to your Tribe application. This guide contains everything you need to get the new, feature-rich, full-stack version of the app up and running, and to continue its development.
+
+---
+### **1. Project Overview & Architecture**
+---
+
+This project has been transformed from a React frontend prototype into a complete MERN (MongoDB, Express, React, Node.js) stack application.
+
+*   **Frontend:** A dynamic, single-page application built with React and TailwindCSS. It's located in the root directory.
+*   **Backend:** A robust RESTful API built with Node.js and Express. It handles all business logic, database interactions, and authentication. It is located in the `/backend` directory.
+*   **Database:** A NoSQL database powered by MongoDB, with schemas managed by Mongoose.
+
+---
+### **2. Backend Setup**
+---
+
+Your backend code is in the `/backend` directory. Follow these steps precisely.
+
+**Step 1: Install Dependencies**
+You need to install dependencies for BOTH the root project and the backend.
+
+```bash
+# In the root project directory (for frontend, if any deps are added)
+# e.g., npm install
+
+# Navigate to the backend directory
+cd backend
+
+# Install backend dependencies
+npm install
+```
+
+**Step 2: Configure Environment Variables**
+This is the most important step for connecting to your database and services.
+
+1.  In the `/backend` directory, create a new file named `.env`.
+2.  Copy the following content into your new `.env` file and fill in your details:
+
+```env
+# Server Configuration
+PORT=5001
+
+# MongoDB Database Connection String (from MongoDB Atlas)
+MONGO_URI=your_mongodb_connection_string_goes_here
+
+# JSON Web Token (JWT) Secret for Authentication
+JWT_SECRET=replace_this_with_a_very_long_and_secure_random_string
+
+# Google Gemini API Key (for the Ember AI feature)
+API_KEY=your_google_gemini_api_key_goes_here
+```
+
+*   **`MONGO_URI`**: The connection string for your database. See the next section for instructions on how to get this.
+*   **`JWT_SECRET`**: A secret key for signing auth tokens. Make this a long, random, and unguessable string for security.
+*   **`API_KEY`**: Your API key from Google AI Studio to power the Ember AI chat feature. The frontend expects this to be available as an environment variable.
+
+**Step 3: Start the Backend Server**
+From the `/backend` directory, run:
+
+```bash
+npm run server
+```
+
+If successful, you'll see messages like `Server running on port 5001` and `MongoDB Connected`. Your API is now live and ready to accept requests from the frontend.
+
+---
+### **3. Setting Up a FREE Cloud Database (MongoDB Atlas)**
+---
+
+Your backend needs a database. MongoDB Atlas offers a generous free tier that is perfect for this project.
+
+1.  **Create Account:** Go to `https://www.mongodb.com/cloud/atlas` and sign up for a free account.
+2.  **Create a Free Cluster:** Follow the on-screen instructions to create a new "M0 Sandbox" cluster. This might take a few minutes to provision.
+3.  **Create a Database User:**
+    *   In the left sidebar, go to "Database Access" under the "SECURITY" section.
+    *   Click "Add New Database User".
+    *   Create a username (e.g., `tribe-admin`) and a **secure password**. **SAVE THIS PASSWORD!**
+    *   Grant the user "Read and write to any database" privileges.
+4.  **Whitelist Your IP Address:**
+    *   Go to "Network Access" -> "Add IP Address".
+    *   For development, click "Allow Access from Anywhere" (`0.0.0.0/0`). For production, you should restrict this to your server's IP.
+5.  **Get Your Connection String:**
+    *   Go to "Database", click "Connect" for your cluster, and choose "Connect your application".
+    *   Copy the connection string provided.
+6.  **Update Your `.env` File:**
+    *   Paste the connection string into your `/backend/.env` file for the `MONGO_URI` variable.
+    *   **Crucially, replace `<password>` with the actual database user password you created.**
+    *   (Optional) You can add a database name after the `.net/` part, like `...mongodb.net/tribe?retryWrites...`.
+
+**Restart your backend server (`npm run server`) after updating the `.env` file.**
+
+---
+### **4. Backend API Documentation**
+---
+
+The backend exposes the following RESTful API endpoints. All routes starting with `/api` are protected and require a valid JWT in the `Authorization: Bearer <token>` header, except for login and register.
+
+**Models:**
+*   `User`: Stores user information, credentials, and follow relationships.
+*   `Post`: Stores post content, images, likes, and comments.
+*   `Tribe`: Stores group information, owner, and members.
+*   `TribeMessage`: Stores messages sent within a tribe's chat.
+*   `Message`: Stores direct messages between two users.
+
+**Routes:**
+
+*   **Authentication (`/api/auth`)**
+    *   `POST /register`: Creates a new user.
+    *   `POST /login`: Authenticates a user and returns a JWT.
+
+*   **Users (`/api/users`)**
+    *   `GET /`: Get all users for discovery.
+    *   `GET /:id`: Get a specific user's profile by ID.
+    *   `PUT /profile`: Update the logged-in user's profile.
+    *   `PUT /:id/follow`: Follow or unfollow another user.
+
+*   **Posts (`/api/posts`)**
+    *   `GET /`: Get all posts (for a feed).
+    *   `POST /`: Create a new post.
+    *   `DELETE /:id`: Delete a post (only by the author).
+    *   `PUT /:id/like`: Like or unlike a post.
+    *   `POST /:id/comments`: Add a comment to a post.
+
+*   **Tribes (`/api/tribes`)**
+    *   `GET /`: Get a list of all tribes.
+    *   `POST /`: Create a new tribe.
+    *   `PUT /:id`: Update a tribe's details (only by the owner).
+    *   `PUT /:id/join`: Join or leave a tribe.
+    *   `GET /:id/messages`: Get all messages for a specific tribe chat.
+    *   `POST /:id/messages`: Send a message in a tribe chat.
+
+*   **Messages (`/api/messages`)**
+    *   `GET /:userToChatId`: Get the direct message history with another user.
+    *   `POST /send/:receiverId`: Send a direct message to another user.
+
+---
+### **5. Running the Full Application Locally**
+---
+
+1.  Open two terminal windows.
+2.  **Terminal 1 (Backend):**
+    ```bash
+    cd backend
+    npm run server
+    ```
+3.  **Terminal 2 (Frontend):**
+    *   You are using a setup that doesn't require a local build step. Simply open the `index.html` file in your browser, likely through a simple HTTP server or a VS Code extension like "Live Server".
+
+The frontend is configured to send API requests to `http://localhost:5001`, where your backend server is running.
+
+---
+### **6. Next Steps & Deployment**
+---
+
+The application is now fully functional. Here are recommendations for polishing it and deploying it to the web.
+
+**Next Steps (Polish):**
+*   **Real-time Chat:** The current chat is based on polling. For an industry-standard experience, integrate WebSockets using a library like `Socket.io` to enable real-time message delivery without needing to refresh.
+*   **Notifications:** Implement a notification system (e.g., for new followers, likes, comments) using WebSockets or a service like Firebase Cloud Messaging.
+*   **Image Uploads:** Currently, images are handled as Base64 strings. For a scalable solution, integrate a cloud storage service like AWS S3 or Cloudinary. The backend would handle the upload and store the image URL in the database.
+*   **Testing:** Write unit and integration tests for your backend API routes to ensure reliability.
+
+**Deployment:**
+Deploying a MERN app involves two main parts:
+
+1.  **Backend Deployment (e.g., on Render, Heroku, or a VPS):**
+    *   Platforms like Render are excellent for Node.js apps.
+    *   Push your code to a Git repository (GitHub).
+    *   Create a new "Web Service" on Render and connect it to your repository.
+    *   Set the build command to `npm install` and the start command to `npm start`.
+    *   **Crucially, you must add your environment variables (`MONGO_URI`, `JWT_SECRET`, `API_KEY`) in the Render dashboard.**
+    *   Your API will be live at a URL like `https://your-app-name.onrender.com`.
+
+2.  **Frontend Deployment (e.g., on Vercel, Netlify):**
+    *   Platforms like Vercel or Netlify are perfect for hosting static/React frontends.
+    *   Push your code to a Git repository.
+    *   Connect your Git repository to Vercel. It will automatically detect it's a static site.
+    *   **Important:** You will need to update the API base URL in your frontend's API service (`src/api/index.ts`) to point to your live backend URL from Render (`https://your-app-name.onrender.com/api`).
+    *   Deploy. Your application is now live!
+
+You have successfully transitioned the Tribe prototype into a real, data-driven, full-stack application. Good luck!

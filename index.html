@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="/tribe.png" />
+    <title>Tribe</title>
+    
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "axios": "https://aistudiocdn.com/axios@^1.7.2",
+    "bcryptjs": "https://aistudiocdn.com/bcryptjs@^3.0.2",
+    "jsonwebtoken": "https://aistudiocdn.com/jsonwebtoken@^9.0.2",
+    "dotenv": "https://aistudiocdn.com/dotenv@^17.2.2",
+    "mongoose": "https://aistudiocdn.com/mongoose@^8.18.1",
+    "express": "https://aistudiocdn.com/express@^5.1.0",
+    "cors": "https://aistudiocdn.com/cors@^2.8.5",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.19.0",
+    "socket.io-client": "https://aistudiocdn.com/socket.io-client@^4.7.5",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.1.1",
+    "http": "https://aistudiocdn.com/http@^0.0.1-security",
+    "socket.io": "https://aistudiocdn.com/socket.io@^4.8.1"
+  }
+}
+</script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+      :root {
+        /* Light Theme - Brighter */
+        --color-background: #FAF8F6;    /* Brighter, creamy off-white */
+        --color-surface: #FFFFFF;       /* Crisp white for cards */
+        --color-border: #EAE4E0;        /* Softer, warmer border */
+        --color-primary: #3B302B;       /* Dark brown text for contrast */
+        --color-secondary: #8A7B74;     /* Muted brown for secondary text */
+        --color-accent: #B59477;        /* Brighter, more saturated tan accent */
+        --color-accent-hover: #A17F61;    /* Darker, rich hover */
+        --color-accent-text: #FFFFFF;     /* White text on accent */
+        --shadow-sm: 0 2px 4px -1px rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+
+        --font-display: 'Poppins', 'sans-serif';
+        --font-body: 'Poppins', 'sans-serif';
+      }
+
+      .dark {
+        /* Dark Theme - Brighter & Warmer */
+        --color-background: #2A2320;    /* Warmer, slightly lighter dark brown */
+        --color-surface: #3B302B;       /* Lighter, warmer card surface */
+        --color-border: #504540;        /* Subtle warm border */
+        --color-primary: #F5F1EE;       /* Warm off-white text for clarity */
+        --color-secondary: #B8AFA9;     /* Lighter secondary text */
+        --color-accent: #C5A58A;        /* Brighter, luminous tan accent */
+        --color-accent-hover: #D6B9A0;    /* Lighter hover for accent */
+        --color-accent-text: #2A2320;      /* Dark text on accent for high contrast */
+        --shadow-sm: 0 2px 4px -1px rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.15), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.15), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      }
+      
+      @keyframes pop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+      }
+      .animate-pop {
+          animation: pop 0.3s ease-out;
+      }
+
+      body {
+        background-color: var(--color-background);
+        font-family: var(--font-body);
+        color: var(--color-primary);
+      }
+
+      .font-display {
+        font-family: var(--font-display);
+      }
+      
+      /* Improved UI/UX Transitions */
+      button, a, input, textarea {
+        transition: all 0.2s ease-in-out;
+      }
+      
+      div[class*="bg-"]:not(.dark):not(:root), header, nav {
+        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+      }
+      
+      /* Custom Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: var(--color-secondary);
+        border-radius: 4px;
+        border: 2px solid var(--color-background);
+      }
+      html {
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-secondary) transparent;
+      }
+      body {
+        -ms-overflow-style: none;
+      }
+      
+      /* Utility to hide scrollbar but keep it scrollable */
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+    </style>
+    
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+               display: ['var(--font-display)'],
+               body: ['var(--font-body)'],
+            },
+            colors: {
+              background: 'var(--color-background)',
+              surface: 'var(--color-surface)',
+              border: 'var(--color-border)',
+              primary: 'var(--color-primary)',
+              secondary: 'var(--color-secondary)',
+              accent: 'var(--color-accent)',
+              'accent-hover': 'var(--color-accent-hover)',
+              'accent-text': 'var(--color-accent-text)',
+            },
+            boxShadow: {
+                sm: 'var(--shadow-sm)',
+                md: 'var(--shadow-md)',
+                lg: 'var(--shadow-lg)',
+            },
+             animation: {
+                pop: 'pop 0.3s ease-out',
+            }
+          }
+        }
+      }
+    </script>
+    
+    <script>
+      // Flicker-prevention script
+      (function() {
+        const theme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (theme === 'dark' || (!theme && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>

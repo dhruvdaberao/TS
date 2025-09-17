@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100px" height="100px">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #B59477;
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-miterlimit: 10;
+        transform-origin: 50% 50%;
+        animation: spin 1.5s cubic-bezier(0.5, 0.15, 0.5, 0.85) infinite;
+      }
+      .cls-2 {
+        stroke: #8A7B74;
+        animation-delay: -0.75s;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+          stroke-dasharray: 0 150;
+        }
+        50% {
+          transform: rotate(450deg);
+          stroke-dasharray: 75 150;
+        }
+        100% {
+          transform: rotate(1080deg);
+          stroke-dasharray: 0 150;
+        }
+      }
+    </style>
+  </defs>
+  <circle class="cls-1" cx="50" cy="50" r="40"/>
+  <circle class="cls-1 cls-2" cx="50" cy="50" r="30"/>
+</svg>

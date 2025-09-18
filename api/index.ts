@@ -50,7 +50,7 @@ import axios from 'axios';
 
 // The backend server is expected to be running on this production URL
 // const API = axios.create({ baseURL: 'https://tribe-social-backend-alpha.vercel.app/api' });
-const API = axios.create({ baseURL: 'https://ts-backend-puce.vercel.app//api' });
+const API = axios.create({ baseURL: 'https://ts-backend-puce.vercel.app/api' });
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem('token');
   if (token) {
